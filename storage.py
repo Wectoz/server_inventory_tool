@@ -5,6 +5,8 @@ from pathlib import Path
 
 
 def load_servers(filename):
+    if not Path(filename).exists():
+        return []
     with open(filename) as file:
         return json.load(file)
 

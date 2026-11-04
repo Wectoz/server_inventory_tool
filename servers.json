@@ -20,8 +20,8 @@
     "address": "192.0.2.10",
     "environment": "test",
     "role": "testserver",
-    "status": "unknown",
-    "last_checked": ""
+    "status": "down",
+    "last_checked": "2026-11-04 16:34"
   },
   {
     "name": "dev01",
