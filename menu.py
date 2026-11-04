@@ -1,5 +1,7 @@
-from checks import check_server
+from checks import check_server, check_all_servers
 from storage import export_csv, save_servers
+
+VALID_ENVIRONMENTS = ['dev', 'test', 'prod']
 
 
 def print_servers(servers):
@@ -13,7 +15,12 @@ def find_server(servers, name):
     for server in servers:
         if server['name'] == name:
             return server
+    # No server had that name
     return None
+
+
+def filter_by_environment(servers, environment):
+    return [server for server in servers if server['environment'] == environment]
 
 
 def run_menu(servers, filename):
@@ -42,23 +49,23 @@ def run_menu(servers, filename):
                 save_servers(filename, servers)
                 print(f"{server['name']} is {server['status']}")
         elif choice == '3':
-            for server in servers:
-                check_server(server)
+            check_all_servers(servers)
             save_servers(filename, servers)
             print("All servers checked.")
         elif choice == '4':
             environment = input("Environment: ")
-            filtered_servers = [s for s in servers if s['environment'] == environment]
-            print_servers(filtered_servers)
+            print_servers(filter_by_environment(servers, environment))
         elif choice == '5':
             name = input("Server name: ")
             if find_server(servers, name) is not None:
                 print(f"A server named {name} already exists.")
+                # Skip the rest and show the menu again
                 continue
             address = input("Server address: ")
+            # Keep asking until the environment is valid
             while True:
                 environment = input("Environment: ")
-                if environment in ['dev', 'test', 'prod']:
+                if environment in VALID_ENVIRONMENTS:
                     break
                 print("Environment must be 'dev', 'test', or 'prod'.")
             role = input("Role: ")
@@ -78,16 +85,16 @@ def run_menu(servers, filename):
             server = find_server(servers, name)
             if server is None:
                 print(f"No server named {name}")
-            elif server['environment'] == 'prod':
+                continue
+            # Production servers need an extra confirmation
+            if server['environment'] == 'prod':
                 confirmation = input(f"Are you sure you want to remove the production server {name}? (yes/no): ")
-                if confirmation == 'yes':
-                    servers.remove(server)
-                    save_servers(filename, servers)
-                    print(f"Server {name} removed.")
-            else:
-                servers.remove(server)
-                save_servers(filename, servers)
-                print(f"Server {name} removed.")
+                if confirmation != 'yes':
+                    print(f"Server {name} was not removed.")
+                    continue
+            servers.remove(server)
+            save_servers(filename, servers)
+            print(f"Server {name} removed.")
         elif choice == '7':
             report_file = export_csv(servers)
             print(f"Servers exported to {report_file}.")

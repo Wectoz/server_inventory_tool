@@ -15,10 +15,12 @@ def save_servers(filename, servers):
     with open(filename, 'w') as file:
         json.dump(servers, file, indent=2)
 
+
 def export_csv(servers):
     Path('reports').mkdir(exist_ok=True)
     timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
     filename = 'reports/inventory_' + timestamp + '.csv'
+    # newline='' stops the csv module from adding empty lines between rows
     with open(filename, 'w', newline='') as csvfile:
         fieldnames = ['name', 'address', 'environment', 'role', 'status', 'last_checked']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
