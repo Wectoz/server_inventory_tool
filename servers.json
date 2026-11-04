@@ -12,8 +12,8 @@
     "address": "127.0.0.1",
     "environment": "prod",
     "role": "database",
-    "status": "unknown",
-    "last_checked": ""
+    "status": "up",
+    "last_checked": "2026-11-04 15:21"
   },
   {
     "name": "test01",
@@ -29,6 +29,6 @@
     "environment": "dev",
     "role": "devserver",
     "status": "up",
-    "last_checked": "2026-11-04 15:16"
+    "last_checked": "2026-11-04 15:18"
   }
 ]
