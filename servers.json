@@ -28,7 +28,7 @@
     "address": "localhost",
     "environment": "dev",
     "role": "devserver",
-    "status": "unknown",
-    "last_checked": ""
+    "status": "up",
+    "last_checked": "2026-11-04 15:16"
   }
 ]
