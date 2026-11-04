@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Generated reports
+reports/
+
+# Local settings and keys
+.aws/
+.agents/
+.codex/
+.env
+.vscode/
+
+# System files
+.DS_Store
