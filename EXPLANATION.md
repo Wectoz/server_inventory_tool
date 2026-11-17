@@ -29,12 +29,15 @@ return None
 **Funktion med parameter och `return`**, `ping` i `checks.py`:
 
 ```python
-def ping(address):
-    result = subprocess.run(["ping", "-c", "1", "-W", "2", address], capture_output=True)
+def ping(address, verbose=False):
+    command = ["ping", "-c", "1", "-W", "2", address]
+    if verbose:
+        print("Running: " + " ".join(command))
+    result = subprocess.run(command, capture_output=True)
     return result.returncode == 0
 ```
 
-`def` skapar funktionen och `address` är en parameter som får sitt värde när funktionen anropas, till exempel `ping('localhost')`. Funktionen kör kommandot `ping` och `return` skickar tillbaka `True` om exitkoden var 0, alltså om servern svarade, och annars `False`.
+`def` skapar funktionen och `address` är en parameter som får sitt värde när funktionen anropas, till exempel `ping('localhost')`. Den andra parametern, `verbose=False`, har ett standardvärde, så den blir `False` om anroparen inte skickar något. Funktionen kör kommandot `ping` och `return` skickar tillbaka `True` om exitkoden var 0, alltså om servern svarade, och annars `False`.
 
 ## 2. Varför en lista med dictionaries
 
@@ -46,13 +49,13 @@ Alla sex värden i en server är strängar. `status` får bara vara `up`, `down`
 
 JSON-filen är till för programmet. Den behåller listan med dictionaries precis som den ser ut i Python, så `load_servers` och `save_servers` i `storage.py` behöver bara en rad var för att läsa och skriva.
 
-CSV-rapporten är till för människor. Den är en tabell med en rubrikrad och en rad per server och går att öppna i Excel. Den skapas av `export_csv` i `storage.py`. JSON-filen skrivs över vid varje ändring, men varje rapport får ett eget filnamn med datum och tid.
+CSV-rapporten är till för människor. Den är en tabell med en rubrikrad och en rad per server och går att öppna i Excel. Den skapas av `export_csv` i `storage.py`. Samtidigt skriver `export_summary` en kort textfil som räknar servrarna per status. JSON-filen skrivs över vid varje ändring, men varje rapport får ett eget filnamn med datum och tid.
 
 ## 4. Moduler och funktioner
 
 - **`main.py`** är startpunkten. `main()` läser flaggorna och miljövariabeln, laddar servrarna och startar antingen menyn eller gör det flaggan säger.
-- **`menu.py`** har textmenyn i `run_menu` och funktionerna som visar och hittar servrar: `print_servers`, `find_server` och `filter_by_environment`.
-- **`storage.py`** sköter filerna: `load_servers`, `save_servers` och `export_csv`.
+- **`menu.py`** har textmenyn i `run_menu` och funktionerna som visar och hittar servrar: `print_servers`, `find_server` och `filter_by_environment`. Här finns också `ask` och `ask_name`, som frågar igen tills användaren har skrivit ett giltigt värde.
+- **`storage.py`** sköter filerna: `load_servers` och `save_servers` för datafilen, och `export_csv` och `export_summary` för rapporterna. `report_path` bygger rapporternas filnamn och `count_statuses` räknar servrarna per status.
 - **`checks.py`** sköter kontrollerna: `ping`, `check_server` och `check_all_servers`.
 
 Menyn och kommandoraden använder samma funktioner. Till exempel anropar både menyval 3 i `run_menu` och `--check-all` i `main()` funktionen `check_all_servers`.
@@ -64,8 +67,8 @@ Menyn och kommandoraden använder samma funktioner. Till exempel anropar både m
 | `json` | `load_servers`, `save_servers` | Läsa och spara datafilen |
 | `csv` | `export_csv` | Skriva rapporten med rubrikrad |
 | `os` | `main()` | Läsa miljövariabeln `INVENTORY_DATAFILE` |
-| `pathlib` | `load_servers`, `export_csv` | Kolla om datafilen finns och skapa katalogen `reports/` |
-| `datetime` | `check_server`, `export_csv` | Tiden för senaste kontroll och datum i rapportens filnamn |
+| `pathlib` | `load_servers`, `report_path` | Kolla om datafilen finns och skapa katalogen `reports/` |
+| `datetime` | `check_server`, `report_path` | Tiden för senaste kontroll och datum i rapportens filnamn |
 | `subprocess` | `ping` | Köra kommandot `ping` |
 | `argparse` | `main()` | Läsa flaggorna och skapa `--help` |
 | `sys` | `main()` | Avsluta med exitkod 0 eller 1 |
@@ -86,6 +89,7 @@ Jag har använt AI-verktyget Claude (Claude Code i VS Code) till att:
 - förklara felmeddelanden och begrepp som indentering, `argparse` och exitkoder
 - hjälpa mig att felsöka delar av koden: `print_servers`, `find_server`, `filter_by_environment` och första versionen av menyn i `menu.py`, `check_all_servers` och indenteringen i `check_server` i `checks.py`, filnamnet för rapporten i `storage.py` samt hanteringen av `--check` och `--environment` i `main.py`
 - testa programmet mot kraven
+- skriva tilläggen `--verbose`, säkrare inmatning (`ask` och `ask_name` i `menu.py`) och sammanfattningsrapporten (`export_summary` i `storage.py`)
 - skriva ett första utkast till `README.md`
 - formatera designen på `EXPLANATION.md` så det blev tydligt
 

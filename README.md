@@ -28,7 +28,7 @@ Server Inventory Tool
 4. Show all servers in environment
 5. Add a new server
 6. Remove a server
-7. Export servers to CSV
+7. Export report (CSV and summary)
 0. Quit
 ```
 
@@ -38,6 +38,7 @@ Type a number and press Enter. After each option, press Enter again to get back 
 - Checking shows the result as a table, with the new status and time.
 - The environment must be `dev`, `test` or `prod`.
 - Two servers can't have the same name.
+- When you add a server, an empty answer or a name with spaces is not accepted. The program asks again until the value is valid.
 - Removing a `prod` server asks you to type `yes` first.
 - Every change is saved right away.
 
@@ -52,7 +53,8 @@ With a flag, the program does one thing and exits.
 | `python3 main.py --list --environment prod` | Lists the servers in one environment |
 | `python3 main.py --check web01` | Pings one server, saves and shows the result |
 | `python3 main.py --check-all` | Pings all servers, saves and shows the results |
-| `python3 main.py --export` | Creates a CSV report |
+| `python3 main.py --export` | Creates a CSV report and a summary |
+| `python3 main.py --check web01 --verbose` | Adds `--verbose` to any command to show more details |
 
 ```
 $ python3 main.py --check-all
@@ -74,6 +76,21 @@ dev01      localhost       dev             devserver       up         2026-11-17
 python3 main.py --check web01
 echo $?
 ```
+
+## Verbose mode
+
+Add `--verbose` to see which data file is used and the exact `ping` command that runs for each check. It works with the other flags and with the menu.
+
+```
+$ python3 main.py --check dev01 --verbose
+Using data file: servers.json
+Running: ping -c 1 -W 2 localhost
+NAME       ADDRESS         ENVIRONMENT     ROLE            STATUS     LAST CHECKED
+-----------------------------------------------------------------------------
+dev01      localhost       dev             devserver       up         2026-11-17 15:21
+```
+
+This is useful when a check gives a result you didn't expect, since you can copy the command and run it yourself.
 
 ## Data file
 
@@ -102,7 +119,20 @@ Each server looks like this:
 
 ## Reports
 
-`--export` or menu option 7 saves a CSV file such as `reports/inventory_2026-11-17_1530.csv`. The name includes the date and time, so a new export doesn't overwrite an old one. The `reports/` folder is created when needed and is not tracked by Git.
+`--export` or menu option 7 saves two files in `reports/`:
+
+- a CSV file with every server, such as `reports/inventory_2026-11-17_1530.csv`
+- a text summary, such as `reports/summary_2026-11-17_1530.txt`, that counts the servers by status, for all servers and for each environment
+
+```
+              UP  DOWN  UNKNOWN  TOTAL
+all            3     1        0      4
+prod           2     0        0      2
+test           0     1        0      1
+dev            1     0        0      1
+```
+
+The names include the date and time, so a new export doesn't overwrite an old one. The `reports/` folder is created when needed and is not tracked by Git.
 
 ## Files
 
@@ -110,9 +140,10 @@ Each server looks like this:
 |---|---|
 | `main.py` | Starting point. Reads the flags, or starts the menu if there are none |
 | `menu.py` | The text menu, and the functions that show, find and filter servers |
-| `storage.py` | Loads and saves the JSON file, exports CSV |
+| `storage.py` | Loads and saves the JSON file, exports the CSV report and the summary |
 | `checks.py` | Pings servers and updates their status |
 | `servers.json` | The server data |
+| `EXPLANATION.md` | Written explanation of the code (in Swedish) |
 
 The menu and the flags use the same functions, so each piece of logic exists in one place.
 
