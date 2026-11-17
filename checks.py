@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 def ping(address):
-    # -c 1: send one ping, -W 2: wait max 2 seconds so dead servers don't hang the program
+    # -c 1: send one ping. -W 2: wait at most 2 seconds for an answer
     result = subprocess.run(["ping", "-c", "1", "-W", "2", address], capture_output=True)
     # Exit code 0 means the server answered
     return result.returncode == 0

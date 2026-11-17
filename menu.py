@@ -15,7 +15,6 @@ def find_server(servers, name):
     for server in servers:
         if server['name'] == name:
             return server
-    # No server had that name
     return None
 
 
@@ -24,7 +23,12 @@ def filter_by_environment(servers, environment):
 
 
 def run_menu(servers, filename):
+    first_time = True
     while True:
+        # The pause is at the top so the 'continue' lines below don't skip it
+        if not first_time:
+            input("\nPress Enter to return to the menu...")
+        first_time = False
         print()
         print("Server Inventory Tool")
         print("1. Show all servers")
@@ -40,6 +44,7 @@ def run_menu(servers, filename):
         if choice == '1':
             print_servers(servers)
         elif choice == '2':
+            print("Servers: " + ", ".join(server['name'] for server in servers))
             name = input("Server name: ")
             server = find_server(servers, name)
             if server is None:
@@ -47,24 +52,22 @@ def run_menu(servers, filename):
             else:
                 check_server(server)
                 save_servers(filename, servers)
-                print(f"{server['name']} is {server['status']}")
+                print_servers([server])
         elif choice == '3':
             check_all_servers(servers)
             save_servers(filename, servers)
-            print("All servers checked.")
+            print_servers(servers)
         elif choice == '4':
-            environment = input("Environment: ")
+            environment = input(f"Environment ({', '.join(VALID_ENVIRONMENTS)}): ")
             print_servers(filter_by_environment(servers, environment))
         elif choice == '5':
             name = input("Server name: ")
             if find_server(servers, name) is not None:
                 print(f"A server named {name} already exists.")
-                # Skip the rest and show the menu again
                 continue
             address = input("Server address: ")
-            # Keep asking until the environment is valid
             while True:
-                environment = input("Environment: ")
+                environment = input(f"Environment ({', '.join(VALID_ENVIRONMENTS)}): ")
                 if environment in VALID_ENVIRONMENTS:
                     break
                 print("Environment must be 'dev', 'test', or 'prod'.")
@@ -81,12 +84,12 @@ def run_menu(servers, filename):
             save_servers(filename, servers)
             print(f"Server {name} added.")
         elif choice == '6':
+            print("Servers: " + ", ".join(server['name'] for server in servers))
             name = input("Server name: ")
             server = find_server(servers, name)
             if server is None:
                 print(f"No server named {name}")
                 continue
-            # Production servers need an extra confirmation
             if server['environment'] == 'prod':
                 confirmation = input(f"Are you sure you want to remove the production server {name}? (yes/no): ")
                 if confirmation != 'yes':

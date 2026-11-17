@@ -14,11 +14,10 @@ def main():
     parser.add_argument('--check', metavar='NAME', help='Check one server by name')
     parser.add_argument('--environment', metavar='ENV', help='Only show servers in this environment (use with --list)')
     args = parser.parse_args()
-    # Use the data file from the environment variable, or servers.json if it is not set
     filename = os.environ.get('INVENTORY_DATAFILE', 'servers.json')
     servers = load_servers(filename)
 
-    # Exit code 0 = everything OK, 1 = a server is down or was not found (for scripts and CI)
+    # Exit code 0 = OK, 1 = a server is down or was not found
     if args.list:
         if args.environment:
             print_servers(filter_by_environment(servers, args.environment))
@@ -35,7 +34,7 @@ def main():
         else:
             answered = check_server(server)
             save_servers(filename, servers)
-            print(f"{server['name']} is {server['status']}")
+            print_servers([server])
             if answered:
                 sys.exit(0)
             else:
@@ -43,6 +42,7 @@ def main():
     elif args.check_all:
         all_up = check_all_servers(servers)
         save_servers(filename, servers)
+        print_servers(servers)
         if all_up:
             sys.exit(0)
         else:

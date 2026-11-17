@@ -4,8 +4,8 @@
     "address": "example.com",
     "environment": "prod",
     "role": "webserver",
-    "status": "unknown",
-    "last_checked": ""
+    "status": "up",
+    "last_checked": "2026-11-17 15:28"
   },
   {
     "name": "db01",
@@ -13,7 +13,7 @@
     "environment": "prod",
     "role": "database",
     "status": "up",
-    "last_checked": "2026-11-04 15:21"
+    "last_checked": "2026-11-17 15:28"
   },
   {
     "name": "test01",
@@ -21,7 +21,7 @@
     "environment": "test",
     "role": "testserver",
     "status": "down",
-    "last_checked": "2026-11-04 16:34"
+    "last_checked": "2026-11-17 15:28"
   },
   {
     "name": "dev01",
@@ -29,6 +29,6 @@
     "environment": "dev",
     "role": "devserver",
     "status": "up",
-    "last_checked": "2026-11-04 15:18"
+    "last_checked": "2026-11-17 15:28"
   }
 ]
