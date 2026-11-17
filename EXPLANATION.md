@@ -87,6 +87,6 @@ Jag har använt AI-verktyget Claude (Claude Code i VS Code) till att:
 - hjälpa mig att felsöka delar av koden: `print_servers`, `find_server`, `filter_by_environment` och första versionen av menyn i `menu.py`, `check_all_servers` och indenteringen i `check_server` i `checks.py`, filnamnet för rapporten i `storage.py` samt hanteringen av `--check` och `--environment` i `main.py`
 - testa programmet mot kraven
 - skriva ett första utkast till `README.md`
-- fomrmatera designen på `EXPLANATION.md` så det blev tydligt
+- formatera designen på `EXPLANATION.md` så det blev tydligt
 
 Jag har också använt GitLens i VS Code för att hjälpa till att skapa commit-meddelanden.
