@@ -88,3 +88,5 @@ Jag har använt AI-verktyget Claude (Claude Code i VS Code) till att:
 - testa programmet mot kraven
 - skriva ett första utkast till `README.md`
 - fomrmatera designen på `EXPLANATION.md` så det blev tydligt
+
+Jag har också använt GitLens i VS Code för att hjälpa till att skapa commit-meddelanden.
